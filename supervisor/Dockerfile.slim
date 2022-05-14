@@ -50,6 +50,6 @@ COPY ./configs/supervisord.conf /etc/supervisor/supervisord.conf
 # copy yaml validator schema
 COPY ./scripts/schema.yaml $SCRIPTS_PATH
 
-ENTRYPOINT ["python", "/docker-entrypoint.py"]
+ENTRYPOINT ["python3", "/docker-entrypoint.py"]
 
 WORKDIR /root

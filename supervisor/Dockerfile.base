@@ -29,9 +29,9 @@ ENV \
     PIPX_BIN_DIR="/usr/local/pipx/bin" \
     PATH="/usr/local/pipx/bin:$PATH"
 RUN \
-    python -m pipx install --force \
+    python3 -m pipx install --force \
         supervisor \
-    && python -m pipx \
+    && python3 -m pipx \
         inject supervisor supervisor-stdout \
     # supervisor needs this logging path
     && mkdir -p /var/log/supervisor/ \
@@ -58,4 +58,4 @@ WORKDIR /app/
 
 ENV PYTHONPATH=/app
 
-ENTRYPOINT ["python", "/docker-entrypoint.py"]
+ENTRYPOINT ["python3", "/docker-entrypoint.py"]

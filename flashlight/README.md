@@ -40,4 +40,4 @@ To ensure logs are displayed, using the `--logtostderr=1` and `--minloglevel=0` 
 
 ## Refrences
 Docker images based off:
--   https://github.com/facebookresearch/flashlight/blob/master/.docker/
+-   https://github.com/facebookresearch/flashlight/blob/main/.docker/

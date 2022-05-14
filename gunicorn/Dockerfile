@@ -45,7 +45,7 @@ EXPOSE 8000
 USER gunicorn
 
 ENV PATH="/home/gunicorn/.local/bin:${PATH}"
-RUN python -m pip install --no-cache-dir -r /tmp/requirements.txt
+RUN python3 -m pip install --no-cache-dir -r /tmp/requirements.txt
 WORKDIR /app/
 
 CMD ["/start.sh"]

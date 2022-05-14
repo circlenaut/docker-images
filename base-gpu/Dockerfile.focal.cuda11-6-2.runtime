@@ -1,0 +1,57 @@
+FROM registry.dev.proneer.co/cuda:11.6.2-ubuntu20.04
+MAINTAINER proneer <phillip@proneer.co>
+
+######## CUDA 11.6 Update 2 Runtime ###########
+
+### Image and project labels
+LABEL \
+    maintainer="proneer <phillip@proneer.co>" \
+        org.label-schema.docker.dockerfile="/Dockerfile.cuda11-6-2.runtime" \
+        org.label-schema.name="Base Ubuntu 20.04 Cuda 11.6 Update 2 Runtime Image" \
+        org.label-schema.url="https://www.proneer.co"
+
+### Technical Environment Variables
+ENV \
+    USER_GID=0 \
+    DEBIAN_FRONTEND=noninteractive
+
+### Install CUDA runtime libraries
+ENV \
+    NV_CUDA_LIB_VERSION="11.6.2-1" \
+    NV_NVTX_VERSION="11.6.124-1" \
+    NV_LIBNPP_VERSION="11.6.3.124-1"
+ENV \
+    NV_LIBNPP_PACKAGE="libnpp-11-6=${NV_LIBNPP_VERSION}" \
+    NV_LIBCUSPARSE_VERSION="11.7.2.124-1" \
+    NV_LIBCUBLAS_PACKAGE_NAME="libcublas-11-6" \
+    NV_LIBCUBLAS_VERSION="11.9.2.110-1"
+ENV \
+    NV_LIBCUBLAS_PACKAGE="${NV_LIBCUBLAS_PACKAGE_NAME}=${NV_LIBCUBLAS_VERSION}" \
+    NV_LIBNCCL_PACKAGE_NAME="libnccl2" \
+    NV_LIBNCCL_PACKAGE_VERSION="2.12.10-1" \
+    NCCL_VERSION="2.12.10-1"
+ENV \
+    NV_LIBNCCL_PACKAGE="${NV_LIBNCCL_PACKAGE_NAME}=${NV_LIBNCCL_PACKAGE_VERSION}+cuda11.6"
+
+RUN \
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
+        cuda-libraries-11-6=${NV_CUDA_LIB_VERSION} \
+        ${NV_LIBNPP_PACKAGE} \
+        cuda-nvtx-11-6=${NV_NVTX_VERSION} \
+        libcusparse-11-6=${NV_LIBCUSPARSE_VERSION} \
+        ${NV_LIBCUBLAS_PACKAGE} \
+        ${NV_LIBNCCL_PACKAGE} \
+    # apt from auto upgrading the cublas package. See https://gitlab.com/nvidia/container-images/cuda/-/issues/88
+    && apt-mark hold \
+        ${NV_LIBCUBLAS_PACKAGE_NAME} \
+        ${NV_LIBNCCL_PACKAGE_NAME} \
+    # Cleanup - cannot use cleanup script here, otherwise too much is removed
+    && apt-get clean \
+    && rm -rf $HOME/.cache/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /root
+
+CMD ['nvidia-smi']

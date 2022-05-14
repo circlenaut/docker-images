@@ -103,4 +103,4 @@ ENV WORKSPACE_PORT=8300
 
 USER $UNAME
 
-ENTRYPOINT ["python", "/docker-entrypoint.py"]
+ENTRYPOINT ["python3", "/docker-entrypoint.py"]

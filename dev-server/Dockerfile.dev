@@ -264,7 +264,7 @@ RUN \
     echo "**** installing golang dev environment ****" \
     && mkdir $RESOURCES_PATH"/golang" \
     && cd $RESOURCES_PATH"/golang" \
-    && GO_VERSION=$(curl -sX GET https://golang.org/dl/ | grep -o '<span.*>.*linux-amd64.*</span>' | grep -oP '(?<=go).*(?=.linux)') \
+    && GO_VERSION=$(curl -sX GET https://go.dev/dl/ | grep -o '<span.*>.*linux-amd64.*</span>' | grep -oP '(?<=go).*(?=.linux)') \
     && wget --quiet https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz -O ~/go.tgz \
     && tar -C /usr/local -xzf ~/go.tgz \
     && rm ~/go.tgz \
@@ -286,7 +286,7 @@ RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 ### Build and install Openresty
 RUN \
     echo "**** installing Openresty web server ****" \
-    && OPEN_RESTY_VERSION="1.19.3.1" \
+    && OPEN_RESTY_VERSION="1.19.9.1" \
     && mkdir $RESOURCES_PATH"/openresty" \
     && cd $RESOURCES_PATH"/openresty" \
     && apt-get update \
@@ -326,7 +326,7 @@ RUN \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         libnss3-tools \
-    && go get -u github.com/caddyserver/xcaddy/cmd/xcaddy \
+    && go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest \
     # Cleanup
     && clean-layer.sh
 
@@ -338,8 +338,7 @@ RUN \
         --with github.com/caddy-dns/cloudflare \
         --with github.com/caddy-dns/dnspod \
         --with github.com/caddy-dns/duckdns \
-        --with github.com/greenpau/caddy-auth-jwt \
-        --with github.com/greenpau/caddy-auth-portal \
+        --with github.com/greenpau/caddy-security \
         --with github.com/greenpau/caddy-trace \
         --output $RESOURCES_PATH"/caddy" \
     && cp $RESOURCES_PATH"/caddy" /usr/bin/caddy \
@@ -374,13 +373,13 @@ RUN \
 
 
 ### Install pyenv to allow dynamic creation of python versions
-RUN \
-    git clone https://github.com/pyenv/pyenv.git $RESOURCES_PATH/.pyenv \
-    # Install pyenv plugins based on pyenv installer
-    && git clone https://github.com/pyenv/pyenv-virtualenv.git $RESOURCES_PATH/.pyenv/plugins/pyenv-virtualenv \
-    && git clone git://github.com/pyenv/pyenv-doctor.git $RESOURCES_PATH/plugins/pyenv-doctor \
-    && git clone https://github.com/pyenv/pyenv-update.git $RESOURCES_PATH/plugins/pyenv-update \
-    && git clone https://github.com/pyenv/pyenv-which-ext.git $RESOURCES_PATH/plugins/pyenv-which-ext
+RUN git clone https://github.com/pyenv/pyenv.git $RESOURCES_PATH/.pyenv
+
+### Install pyenv plugins based on pyenv installer
+RUN git clone https://github.com/pyenv/pyenv-virtualenv.git $RESOURCES_PATH/.pyenv/plugins/pyenv-virtualenv
+RUN git clone https://github.com/pyenv/pyenv-doctor.git $RESOURCES_PATH/plugins/pyenv-doctor
+RUN git clone https://github.com/pyenv/pyenv-update.git $RESOURCES_PATH/plugins/pyenv-update
+RUN git clone https://github.com/pyenv/pyenv-which-ext.git $RESOURCES_PATH/plugins/pyenv-which-ext
 
 ### Add pyenv to path
 ENV \

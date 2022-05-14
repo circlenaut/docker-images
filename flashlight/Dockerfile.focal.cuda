@@ -103,7 +103,7 @@ RUN apt-get update && \
         # python sox
         sox python3-dev python3-pip python3-distutils && \
         # python (for bindings and preprocessing)
-        python -m pip --no-cache-dir install --upgrade setuptools numpy sox tqdm && \
+        python3 -m pip --no-cache-dir install --upgrade setuptools numpy sox tqdm && \
 # ==================================================================
 # clean up everything
 # ------------------------------------------------------------------
@@ -129,7 +129,7 @@ ENV KENLM_ROOT=/opt/kenlm
 # ==================================================================
 # module list
 # ------------------------------------------------------------------
-# flashlight       master     (git, CUDA backend)
+# flashlight       main     (git, CUDA backend)
 # ==================================================================
 
 # just in case for visibility
@@ -143,7 +143,7 @@ ENV RESOURCES_PATH="/resources"
 RUN mkdir $RESOURCES_PATH && chmod a+rwx $RESOURCES_PATH
 
 RUN \
-    FLASHLIGHT_VERSION="master" \
+    FLASHLIGHT_VERSION="main" \
     && echo "**** building and installing flashlight $FLASHLIGHT_VERSION ****" \
     && git clone --depth 1 --branch $FLASHLIGHT_VERSION https://github.com/facebookresearch/flashlight.git $RESOURCES_PATH/flashlight
 
