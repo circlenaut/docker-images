@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Main Workspace Run Script
@@ -278,7 +278,7 @@ default_user = [{
             'colored-man-pages', 
             'git-flow', 
             'git-extras', 
-            'python', 
+            'python3', 
             'zsh-autosuggestions', 
             'history-substring-search', 
             'zsh-completions', 
@@ -530,7 +530,7 @@ workspace_env_json = json.dumps(workspace_env)
 ### Configure user
 log.info(f"configuring user")
 run(
-    ['python', f"/scripts/configure_user.py", 
+    ['python3', f"/scripts/configure_user.py", 
         '--opts', opts_json,
         '--env', workspace_env_json,
         '--configs', configs_list_json
@@ -548,7 +548,7 @@ workspace_env['WORKSPACE_USER_PASSWORD'] = password
 ### Start workspace
 sys.exit(
     run(
-        ['python', '/scripts/run_workspace.py', 
+        ['python3', '/scripts/run_workspace.py', 
             '--opts', opts_json],
         env=workspace_env
     )

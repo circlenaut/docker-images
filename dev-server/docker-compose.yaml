@@ -65,13 +65,15 @@ services:
       HTTPS_PORT: "443"
 #      BASE_URL: "/caddy"
 
-  pod2-colab:
+  pod2-pods1-gpu1:
 #    image: mltooling/ml-workspace-minimal:${POD2_VERSION?err}
 #    image: ezeddin/code-server:conda.dev.gpu
-    image: registry.dev.proneer.co/dev-server:latest
-    container_name: pod2-colab
+    image: registry.dev.proneer.co/webdev:11.6.2-cudnn8-devel-ubuntu20.04-latest
+    container_name: pod2_pods1_gpu1
     restart: unless-stopped
     runtime: nvidia
+    command: "ls -la"
+    entrypoint: "sudo python3 /docker-entrypoint.py"
     ports:
       - "2222:22"
 #      - "8080:8080"
@@ -80,13 +82,13 @@ services:
     networks:
       - proxy
     volumes:
-      - "./tests/config_test.yml:/scripts/config.yml"
+      # - "./tests/config_test.yml:/scripts/config.yml"
 #      - "./tests/pod2-colab/envs:/opt/conda/envs"
 #      - "/data/workspaces/pod2/envs:/opt/conda/envs"
 #      - "/data/workspaces/pod2/workspace:/workspace"
 #      - "./tests/home:/home"
 #      - "./tests/pod2-colab/environment.yml:/data/environment.yml"
-      - "./tests/conda-parser:/data/conda-parser"
+      # - "./tests/conda-parser:/data/conda-parser"
       - "./tests/conda-parser/environment.yml:/data/environment.yml"
 
 #      - "./tests/cp-vton-plus:/data/cp-vton-plus"
@@ -100,7 +102,7 @@ services:
 #            'capabilities': ['gpu', 'utility']
     environment:
       LOG_VERBOSITY: "DEBUG"
-      VIRTUAL_HOST: "pod2.colab.proneer.co"
+      VIRTUAL_HOST: "pod2.pods1-gpu1.dev.proneer.co"
 #      VIRTUAL_BIND_IP: "10.95.46.219"
 #      VIRTUAL_BIND_NET: "proxy"
       #VIRTUAL_PORT: "8300"
@@ -124,28 +126,28 @@ services:
 #      MAX_NUM_THREADS: "auto"
       NVIDIA_VISIBLE_DEVICES: "all"
 
-  test1-colab:
+  test1-pods1-gpu1:
     image: jwilder/whoami
-    container_name: test1-colab
+    container_name: test1_pods1_gpu1
     restart: unless-stopped
     networks:
       - proxy
     environment:
-      VIRTUAL_HOST: "test1.colab.proneer.co"
+      VIRTUAL_HOST: "test1.pods1-gpu1.dev.proneer.co"
 #      VIRTUAL_BIND_IP: "10.95.46.219"
 #      VIRTUAL_BIND_NET: "proxy"
       VIRTUAL_PORT: "8000"
       VIRTUAL_PROTO: "http"
 
-  test2-colab:
+  test2-pods1-gpu1:
     image: jwilder/whoami
-    container_name: test2-colab
+    container_name: test2_pods1_gpu1
     restart: unless-stopped
     networks:
       - proxy
  #     - test_net
     environment:
-      VIRTUAL_HOST: "test2.colab.proneer.co"
+      VIRTUAL_HOST: "test2.pods1-gpu1.dev.proneer.co"
 #      VIRTUAL_BIND_IP: "127.0.0.1"
 #      VIRTUAL_BIND_NET: "test_net"
       VIRTUAL_PORT: "8000"
