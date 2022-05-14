@@ -36,7 +36,7 @@ RUN mkdir $BUILD_PATH && chmod a+rwx $BUILD_PATH \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
     software-properties-common \
-    python.8 \
+    python3.8 \
     python3-pip \
     supervisor \
     # Fix permissions
@@ -120,16 +120,17 @@ RUN echo "**** installing docker sdk ****" \
         coloredlogs
 
 ### Install Golang dev environment
-RUN echo "**** installing golang dev environment ****" \
-    && mkdir $BUILD_PATH"/golang" \
-    && cd $BUILD_PATH"/golang" \
-    && GO_VERSION=$(curl -sX GET https://golang.org/dl/ | grep -o '<span.*>.*linux-amd64.*</span>' | grep -oP '(?<=go).*(?=.linux)') \
+RUN \
+    echo "**** installing golang dev environment ****" \
+    && mkdir $RESOURCES_PATH"/golang" \
+    && cd $RESOURCES_PATH"/golang" \
+    && GO_VERSION=$(curl -sX GET https://go.dev/dl/ | grep -o '<span.*>.*linux-amd64.*</span>' | grep -oP '(?<=go).*(?=.linux)') \
     && wget --quiet https://dl.google.com/go/go$GO_VERSION.linux-amd64.tar.gz -O ~/go.tgz \
     && tar -C /usr/local -xzf ~/go.tgz \
     && rm ~/go.tgz \
     && echo "export PATH="/usr/local/go/bin:$PATH"" >> ~/.bashrc
 
-RUN rm -r $BUILD_PATH"/golang" \
+RUN rm -rf $BUILD_PATH"/golang" \
     # Fix permissions \
     && fix-permissions.sh $HOME \
     # Cleanup

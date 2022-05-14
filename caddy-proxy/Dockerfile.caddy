@@ -18,7 +18,7 @@ ENV \
 
 ### Build and install Caddy with additional plugins
 RUN echo "**** installing xcaddy builder ****" \
-    && go get -u github.com/caddyserver/xcaddy/cmd/xcaddy
+    && go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
 
 RUN echo "**** building caddy ****" \
     && CGO_ENABLED=0 GOARCH=amd64 GOOS=linux \
@@ -27,8 +27,7 @@ RUN echo "**** building caddy ****" \
         --with github.com/caddy-dns/cloudflare \
         --with github.com/caddy-dns/dnspod \
         --with github.com/caddy-dns/duckdns \
-        --with github.com/greenpau/caddy-auth-jwt \
-        --with github.com/greenpau/caddy-auth-portal \
+        --with github.com/greenpau/caddy-security \
         --with github.com/greenpau/caddy-trace \
         --output $BUILD_PATH"/caddy" \
     && cp $BUILD_PATH"/caddy" /usr/bin/caddy \
@@ -64,7 +63,6 @@ RUN echo "$UNAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$UNAME && \
 ### Copy configuration files
 COPY scripts/docker-entrypoint.py /
 COPY scripts/run_caddy.py $SCRIPTS_PATH/
-COPY scripts/caddyfile.py $SCRIPTS_PATH/
 COPY configs/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 COPY configs/supervisor/conf.d /etc/supervisor/conf.d/
 COPY configs/caddy/Caddyfile $APPS_PATH/caddy/Caddyfile
