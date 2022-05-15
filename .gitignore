@@ -1,2 +1,10 @@
 # logs
 *.log
+
+# builds
+*/build
+*/tests
+
+# configs
+dev-server/configs/users.ymal
+dev-server/docker-compose.yaml

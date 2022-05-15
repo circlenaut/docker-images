@@ -282,11 +282,13 @@ ENV \
     DEBIAN_FRONTEND=noninteractive \
     RESOURCES_PATH="/resources" \
     SCRIPTS_PATH="/scripts" \
+    CONFIGS_PATH="/configs" \
     APPS_PATH="/apps" \
     DATA_PATH="/data"
 RUN \
     mkdir $RESOURCES_PATH && chmod a+rwx $RESOURCES_PATH \
     && mkdir $SCRIPTS_PATH && chmod a+rwx $SCRIPTS_PATH \
+    && mkdir $CONFIGS_PATH && chmod a+rwx $CONFIGS_PATH \
     && mkdir $APPS_PATH && chmod a+rwx $APPS_PATH \
     && mkdir $DATA_PATH && chmod a+rw $DATA_PATH
 RUN \
@@ -672,6 +674,7 @@ ENV \
     DEBIAN_FRONTEND=noninteractive \
     RESOURCES_PATH="/resources" \
     SCRIPTS_PATH="/scripts" \
+    CONFIGS_PATH="/configs" \
     APPS_PATH="/apps" \
     DATA_PATH="/data" \
     WORKSPACE_HOME="/workspace"
@@ -704,5 +707,6 @@ COPY scripts/configure_caddy.py $SCRIPTS_PATH
 COPY scripts/configure_app.py $SCRIPTS_PATH
 COPY scripts/setup_conda_envs.py $SCRIPTS_PATH
 COPY scripts/run_installers.py $SCRIPTS_PATH
-COPY configs/users.ymal $SCRIPTS_PATH
-ENTRYPOINT python /docker-entrypoint.py
+COPY scripts/schema.yaml $SCRIPTS_PATH
+COPY configs/configs-sample.ymal $CONFIGS_PATH/config.yaml
+ENTRYPOINT python3 /docker-entrypoint.py

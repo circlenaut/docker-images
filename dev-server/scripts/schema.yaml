@@ -74,9 +74,11 @@ zsh_map:
     theme: list(str(required=False), required=False)
     plugins: list(str(required=False), required=False)
 ssh_map:
-    pub_keys: list(str(required=False), required=False)
+    authorized_keys: list(str(required=False), required=False)
+    key_names: list(str(required=False), required=False)
     configs: list(include('ssh_config_map', required=False), required=False)
 ssh_config_map:
+    name: str(required=False)
     hostname: str(required=False)
     port: str(required=False)
     user: str(required=False)

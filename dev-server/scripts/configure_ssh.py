@@ -48,7 +48,8 @@ coloredlogs.install(fmt='%(asctime)s [%(levelname)s] %(message)s', level=verbosi
 user_name = cli_user.get("name")
 user_group = cli_user.get("group")
 user_home = cli_user.get("dirs").get("home").get("path")
-pub_keys = cli_user.get("ssh").get("pub_keys")
+authorized_keys = cli_user.get("ssh").get("authorized_keys")
+key_names = cli_user.get("ssh").get("key_names")
 configs = cli_user.get("ssh").get("configs")
 
 # Set root user
@@ -72,9 +73,9 @@ cfg_opts = {
 }
 if configs != None:
     for cfg in configs:
-        if cfg.get("hostname") != None or not cfg.get("hostname").isspace():
+        if cfg.get("name") != None or not cfg.get("name").isspace():
             with open(config_file, "a") as f: 
-                f.write("Host {}".format(cfg.get("hostname")) + "\n")
+                f.write("Host {}".format(cfg.get("name")) + "\n")
             for o, a in cfg_opts.items():
                 if cfg.get(o) != None:
                     with open(config_file, "a") as f1: 
@@ -127,12 +128,19 @@ run('grep -qxF "$(cat {home}/.ssh/{key_name}.pub)" {home}/.ssh/authorized_keys |
 
 # Authorize user's public keys
 pub_key_auth_file = os.path.join(user_home, ".ssh", "authorized_keys")
-for key in pub_keys:
+for key in authorized_keys:
     log.info(f"authorizing key: '{key}'")
     with open(pub_key_auth_file, "a") as f: 
         f.write(key + "\n")
 # fix permissions
 func.chmod(pub_key_auth_file, "600")
+
+# Create named keypairs
+for name in key_names:
+    if not os.path.isfile(user_home + "/.ssh/"+name):
+        log.info("Creating new SSH Key ("+ name + ")")
+    # create ssh key if it does not exist yet
+    run("ssh-keygen -f {home}/.ssh/{key_name} -t ed25519 -q -N \"\" > /dev/null".format(home=user_home, key_name=name), shell=True)
 
 # Add identity to ssh agent -> e.g. can be used for git authorization
 run("eval \"$(ssh-agent -s)\" && ssh-add " + user_home + "/.ssh/"+SSH_KEY_NAME + " > /dev/null", shell=True)

@@ -17,6 +17,7 @@ ENV \
     DEBIAN_FRONTEND=noninteractive \
     RESOURCES_PATH="/resources" \
     SCRIPTS_PATH="/scripts" \
+    CONFIGS_PATH="/configs" \
     APPS_PATH="/apps" \
     DATA_PATH="/data" \
     WORKSPACE_HOME="/workspace"
@@ -61,9 +62,9 @@ COPY scripts/configure_caddy.py $SCRIPTS_PATH
 COPY scripts/configure_app.py $SCRIPTS_PATH
 COPY scripts/setup_conda_envs.py $SCRIPTS_PATH
 COPY scripts/run_installers.py $SCRIPTS_PATH
-# copy main config file
-#COPY scripts/config.yaml $SCRIPTS_PATH
 # copy yaml validator schema
-COPY configs/users.ymal $SCRIPTS_PATH
+COPY scripts/schema.yaml $SCRIPTS_PATH
+# copy main config file
+COPY configs/configs-sample.ymal $CONFIGS_PATH/config.yaml
 
-ENTRYPOINT ["python3", "/docker-entrypoint.py"]
+ENTRYPOINT ["sudo", "python3", "/docker-entrypoint.py"]

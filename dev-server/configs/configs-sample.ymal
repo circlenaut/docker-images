@@ -67,16 +67,18 @@ users:
           - "https://github.com/zsh-users/zsh-history-substring-search"
           - "https://github.com/supercrabtree/k"
     ssh:
-        pub_keys:
+        authorized_keys:
           - "ssh-rsa AAAAB3N_test_key"
-          - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDLzLaad0eEkhtzoaoAjghPJPKqYiH4yuD/TuVtGkH+7zF6PeerKjFinFyjqBOk9GR9Nn5xKv8YpRBYZUM8caTP/3Bx/LG3pLbmaeDiv9d/+DUf9jk6zq+YqDmN+NrbqdGtP3lCR3r/dco15WrI8Z4xSxHDa1HjUL1nUKyNVWkelVSaXJQ30Dh9heuK55nrHNtPK8Y64T0crMoD/chpNJoSvesIh6WGRSsAPDjICkEbhcatdGhlV44imceCLnON6DfZME7GIhmD2USCrGwBjgJ0k+gHtC0EvKzNjG2oR214ztiudEYHvStBLFPfBn3uVqLXtmoEq8bKNoJKNzuLDW9wX16N6rcYln5kTAjlmdH9fmK7U3N+bvqgBw01Fni3ftOQDt3+9fv+8ZjdtbNIBg4jyy7MMZAdXzHs15muQDQ/rh3H5dM3EpJXLQAp9FgDM8cgxhdebqrRAjP8LQSu4yRNNCcu+yw6+IKYBYPcgA+WzEYwzfRpecw1Qgh5za6pDS6YIfrgpOTXFT9A/M8XCzZJEel5VV3oaYtbrz5Ilzz6OtQvz0fL4lqEteYfhyDNsa1JJ8l6uLStDPaM//bt0z4THS8NGpT/QL0nvnXoh/IsJFv+o+WImuRlmPK0t+VzUw7Byx318EclVzgfHRqD1ff1j7I/58tZUjwJhnv7Gk/YSw== phillip@node3-dal13-ibm.dev.sys.proneer.co"
+        key_names:
+          - "test_key"
         configs:
-          - hostname: "git.proneer.co"
+          - name: "test.git.proneer.co"
+            hostname: "git.proneer.co"
             port: "22"
             user: "git"
             pub_key_auth: "yes"
             id_only: "yes"
-            #id_file_path: "~/.ssh/id_ed25519"
+            id_file_path: "~/.ssh/id_ed25519"
     filebrowser:
         port: "8055"
         base_url: "/data"
@@ -110,6 +112,6 @@ users:
     app:
         bind_addr: "0.0.0.0:8080"
         base_url: "/"
-        root_dir: "/workspace/magento2"
+        root_dir: "/workspace/admin"
         user: "admin"
         password: "adminpass1234"

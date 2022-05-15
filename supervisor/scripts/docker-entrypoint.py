@@ -98,7 +98,7 @@ def reconcile_config(configs: Dict) -> Dict:
     ### Reconcile docker env var with corresponding config setting
     system_configs = dict()
     # copy and save user configs
-    users_config_copy = copy(configs["users"])
+    users_config_copy = copy(configs_list.get("users"))
 
     # if system not configured in yaml, then set to docker envs
     if configs.get("system") == None:

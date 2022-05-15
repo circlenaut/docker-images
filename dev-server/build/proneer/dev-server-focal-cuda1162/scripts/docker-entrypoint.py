@@ -40,24 +40,24 @@ config_path = str()
 #        configs.append(path)
 
 # Check if multiple config files exist and load the user defined one or system/user overwritten one
-if os.path.exists('/scripts/config.yaml'):
-    config_path = '/scripts/config.yaml'
+if os.path.exists('/configs/config.yaml'):
+    config_path = '/configs/config.yaml'
     # Validate file
-    schema = yamale.make_schema('/configs/users.ymal')
+    schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
-elif os.path.exists('/scripts/config.yml'):
-    config_path = '/scripts/config.yml'
+elif os.path.exists('/configs/config.yml'):
+    config_path = '/configs/config.yml'
     # Validate file
-    schema = yamale.make_schema('/configs/users.ymal')
+    schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
-elif os.path.exists('/scripts/config.yml') and os.path.exists('/scripts/config.yaml'):
-    config_path = '/scripts/config.yml'
+elif os.path.exists('/configs/config.yml') and os.path.exists('/configs/config.yaml'):
+    config_path = '/configs/config.yml'
     log.warning("both config.yaml and config.yml exists, using config.yml")
-    if os.path.exists('/scripts/config.yaml'): os.remove('/scripts/config.yaml')
+    if os.path.exists('/configs/config.yaml'): os.remove('/configs/config.yaml')
     # Validate file
-    schema = yamale.make_schema('/configs/users.ymal')
+    schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO") 
 else:
@@ -72,7 +72,7 @@ if os.path.exists(config_path):
             configs_list = yaml.load(f, Loader=yaml.FullLoader)
         log.debug(configs_list)
 else:
-    log.debug(f"Config does not exist: '{config_path}'")
+    log.warning(f"Config does not exist: '{config_path}'")
 
 
 ### Read or set docker default envs
@@ -144,16 +144,7 @@ coloredlogs.install(fmt='%(asctime)s [%(levelname)s] %(message)s', level=verbosi
 ### Reconcile docker env var with corresponding config setting
 system_configs = dict()
 # copy and save user configs
-if configs_list.get("users") == None:
-    users_config_copy = [{
-        "default_user": {
-            "name": "Default User",
-            "uid": "1001",
-            "password": "password"
-        }
-    }]
-else:
-    users_config_copy = copy(configs_list["users"])
+users_config_copy = copy(configs_list.get("users"))
 
 # if system not configured in yaml, then set to docker envs
 if configs_list.get("system") == None:
@@ -299,8 +290,10 @@ default_user = [{
             'https://github.com/supercrabtree/k'
         ]},
     'ssh': {
-        'pub_keys': [''],
+        'authorized_keys': [''],
+        'key_names': [''],
         'configs': [{
+            'name': '', 
             'hostname': '', 
             'port': '', 
             'user': '',
@@ -408,8 +401,8 @@ elif len(configs_list.get("users")) == 0:
 elif len(configs_list.get("users")) == 1:
     log.info("Building a single user environment")
     # what's the point of this? overwrite workspace envs with corresponding user envs? Maybe not good to touch and better keep docker envs concistent with this dict. Don't overwrite with user settings. Also simpler
-    #for uc in user_configs:
-        #set_user_config(uc, default_user, verbosity)
+    # for uc in user_configs:
+    #     set_user_config(uc, default_user, verbosity)
 
     user_count = 0
     for u in configs_list.get("users"):
