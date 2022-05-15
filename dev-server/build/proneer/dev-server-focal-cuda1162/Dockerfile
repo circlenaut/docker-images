@@ -503,6 +503,8 @@ RUN \
     #clean-layer.sh # throws error
 ENV PATH="/opt/node/bin:$PATH"
 RUN \
+    curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+RUN \
     echo "**** installing java dev environment ****" \
     apt-get update \
     && apt-get install -y --no-install-recommends openjdk-11-jdk maven scala \
@@ -647,6 +649,14 @@ RUN \
     # Cleanup
     && clean-layer.sh
 RUN \
+    wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add - \
+    && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        mongodb-org
+RUN \
+    apt-get update && apt-get install -y --no-install-recommends \
+        postgresql postgresql-contrib
+RUN \
     apt-get update \
     && apt-get install -y --no-install-recommends rsyslog \
     # Create sshd run directory - required for starting process via supervisor
@@ -704,7 +714,7 @@ COPY scripts/configure_zsh.py $SCRIPTS_PATH
 COPY scripts/configure_vscode.py $SCRIPTS_PATH
 COPY scripts/configure_filebrowser.py $SCRIPTS_PATH
 COPY scripts/configure_caddy.py $SCRIPTS_PATH
-COPY scripts/configure_app.py $SCRIPTS_PATH
+COPY scripts/configure_apps.py $SCRIPTS_PATH
 COPY scripts/setup_conda_envs.py $SCRIPTS_PATH
 COPY scripts/run_installers.py $SCRIPTS_PATH
 COPY scripts/schema.yaml $SCRIPTS_PATH

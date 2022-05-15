@@ -13,6 +13,7 @@ import coloredlogs
 import argparse
 from urllib.parse import quote, urljoin
 from subprocess   import run, call
+from typing import Dict
 import functions as func
 
 ### Enable logging
@@ -64,8 +65,6 @@ fb_port = cli_user.get("filebrowser").get("port")
 fb_base_url = cli_user.get("filebrowser").get("base_url")
 vscode_bind_addr = cli_user.get("vscode").get("bind_addr")
 vscode_base_url = cli_user.get("vscode").get("base_url")
-app_bind_addr = cli_user.get("app").get("bind_addr")
-app_base_url = cli_user.get("app").get("base_url")
 
 ### Get user settings
 user_name = cli_user.get("name")
@@ -141,19 +140,22 @@ filebrowser_settings = {
     "enable_templates": True,
 }
 
-app_settings = {
-    "name": "app",
-    "host": "localhost",
-    "port": app_bind_addr.split(":",1)[1],
-    "proto": "http",
-    "base_url": func.clean_url(app_base_url),
-    "enable_gzip": True,
-    "enable_gzip": True,
-    "enable_templates": True,
-}
+def _set_app_settings(app: Dict) -> Dict:
+    return {
+        "name": app.get("name"),
+        "host": app.get("bind_addr").split(":",1)[0],
+        "port": app.get("bind_addr").split(":",1)[1],
+        "proto": "http",
+        "base_url": func.clean_url(app.get("base_url")),
+        "enable_gzip": True,
+        "enable_gzip": True,
+        "enable_templates": True,
+    }
+
+apps_settings = [_set_app_settings(app) for app in cli_user.get("apps")]
 
 ### Create application sub-config templates
-service_settings = [vscode_settings, filebrowser_settings, app_settings]
+service_settings = [vscode_settings, filebrowser_settings] + apps_settings
 
 subroutes = list()
 for service in service_settings:

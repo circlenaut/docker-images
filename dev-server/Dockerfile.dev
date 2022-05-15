@@ -251,6 +251,10 @@ RUN \
 
 ENV PATH="/opt/node/bin:$PATH"
 
+### Install NVM
+RUN \
+    curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+
 ### Install Java Runtime
 RUN \
     echo "**** installing java dev environment ****" \
@@ -420,6 +424,19 @@ RUN \
         httpie --force \
     # Cleanup
     && clean-layer.sh
+
+### Install databases
+# Install Mongo
+RUN \
+    wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add - \
+    && echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        mongodb-org
+# Install Postgres
+RUN \
+    apt-get update && apt-get install -y --no-install-recommends \
+        postgresql postgresql-contrib
+
 
 ### Install latest supervisor for process supervision
 RUN \

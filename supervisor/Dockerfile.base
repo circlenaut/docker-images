@@ -45,7 +45,7 @@ RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
 # copy scripts
 COPY ./scripts/docker-entrypoint.py /
 COPY ./scripts/__init__.py $SCRIPTS_PATH
-COPY ./scripts/configure_app.py $SCRIPTS_PATH
+COPY ./scripts/configure_apps.py $SCRIPTS_PATH
 COPY ./scripts/functions_.py $SCRIPTS_PATH
 COPY ./scripts/run_supervisor.py $SCRIPTS_PATH
 # copy supervisor configs

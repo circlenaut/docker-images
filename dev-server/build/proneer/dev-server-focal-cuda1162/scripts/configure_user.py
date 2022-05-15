@@ -447,7 +447,7 @@ def run_user_services_config(config, environment, exists, args):
           "filebrowser": {
                "config": {}
           }, 
-          "app": {
+          "apps": {
                "config": {}
           }
      } 

@@ -59,7 +59,7 @@ user_map:
     ssh: include('ssh_map', required=False)
     filebrowser: include('filebrowser_map', required=False)
     vscode: include('vscode_map', required=False)
-    app: include('app_map', required=False)
+    apps: list(include('app_map', required=False), required=False)
 dir_map:
     name: str(required=False)
     path: str(required=False)
@@ -94,6 +94,7 @@ vscode_map:
     base_url: str(required=False)
     extensions: list(str(required=False), required=False)
 app_map:
+    name: str(required=False)
     bind_addr: str(required=False)
     base_url: str(required=False)
     root_dir: str(required=False)

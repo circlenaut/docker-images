@@ -228,12 +228,8 @@ default_user = [{
             'name': 'apps', 
             'path': configs_list.get("system").get("apps_path"), 
             'mode': '755'
-        }, 
-        {
-            'name': 'app', 
-            'path': configs_list.get("system").get("app_root_dir"), 
-            'mode': '755'
-        }], 
+        }
+    ],
     'backup_paths': [
         f'/home/{configs_list.get("system").get("workspace_user")}/.config',
         f'/home/{configs_list.get("system").get("workspace_user")}/.ssh',
@@ -336,13 +332,14 @@ default_user = [{
             'yzhang.markdown-all-in-one'
             ]
     }, 
-    'app': {
+    'apps': [{
+        'name': configs_list.get("system").get("app_name"), 
         'bind_addr': configs_list.get("system").get("app_bind_addr"), 
         'base_url': configs_list.get("system").get("app_base_url"), 
         'root_dir': configs_list.get("system").get("app_root_dir"), 
         'user': configs_list.get("system").get("app_user"), 
         'password': configs_list.get("system").get("app_password")
-    }
+    }]
 }]
 
 def set_user_config(user_config, default_user, level):

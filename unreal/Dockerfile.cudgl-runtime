@@ -1,0 +1,241 @@
+ARG CUDAGL_VERSION=${CUDAGL_VERSION}
+FROM nvidia/cudagl:${CUDAGL_VERSION}
+
+### Build Arguments
+ARG ENGINE_VERSION=${ENGINE_VERSION}
+
+### Image and project labels
+LABEL \
+    org.opencontainers.image.authors="phillip@queendom.io" \
+    org.label-schema.docker.dockerfile="/Dockerfile" \
+    org.label-schema.name="Unreal Engine ${ENGINE_VERSION} Pixel Streaming Server" \
+    org.label-schema.url="https://www.proneer.co"
+
+### Technical Environment Variables
+ENV \
+    USER_GID=0 \
+    DEBIAN_FRONTEND=noninteractive
+
+### Run installer as root
+USER root
+
+### Copy layer cleanup script
+COPY scripts/clean-layer.sh  /usr/bin/clean-layer.sh
+COPY scripts/fix-permissions.sh  /usr/bin/fix-permissions.sh
+
+### Make clean-layer and fix-permissions executable
+RUN \
+    chmod a+rwx /usr/bin/clean-layer.sh && \
+    chmod a+rwx /usr/bin/fix-permissions.sh
+
+### Copy apt resources
+COPY sources-focal.list /etc/apt/sources.list
+COPY apt.conf /etc/apt/apt.conf.d/proneer
+
+### Update image
+RUN apt-get update && apt-get upgrade -y 
+
+### Install minimum packages
+RUN \
+    apt-get update \	
+	&& apt-get install -y --no-install-recommends \
+		apt-utils \
+		ca-certificates \
+		gnupg1 \
+		libffi7 \
+		locales \
+		openssl \
+		tzdata \
+	# Set Ubuntu apt
+	&& apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6A755776 \
+    # Cleanup
+    && clean-layer.sh \
+    && rm -rf /var/lib/apt/lists/* \
+    # Fix permissions
+    && fix-permissions.sh $HOME
+
+# Enable the NVIDIA driver capabilities required by the NVENC video encoding API
+ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},video
+
+# Enable Vulkan support for NVIDIA GPUs
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		libvulkan1 \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& VULKAN_API_VERSION=`dpkg -s libvulkan1 | grep -oP 'Version: [0-9|\.]+' | grep -oP '[0-9|\.]+'` \
+	&& mkdir -p /etc/vulkan/icd.d/ \
+	&& echo \
+	"{\
+		\"file_format_version\" : \"1.0.0\",\
+		\"ICD\": {\
+			\"library_path\": \"libGLX_nvidia.so.0\",\
+			\"api_version\" : \"${VULKAN_API_VERSION}\"\
+		}\
+	}" > /etc/vulkan/icd.d/nvidia_icd.json && echo '' \
+	&& echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' \
+	&& echo 'Note that for large filesystem layers this can take quite some time.' \
+	&& echo 'Performing filesystem layer commit...' \
+	&& echo ''
+
+# Install the dependencies for VirtualGL
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		ca-certificates \
+		curl \
+		libfontconfig1 \
+		libfreetype6 \
+		libglu1 \
+		libsm6 \
+		libxcomposite1 \
+		libxcursor1 \
+		libxi6 \
+		libxrandr2 \
+		libxrender1 \
+		libxss1 \
+		libxv1 \
+		x11-xkb-utils \
+		xauth \
+		xfonts-base \
+		xkb-data \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Install VirtualGL
+ENV NVIDIA_DRIVER_CAPABILITIES ${NVIDIA_DRIVER_CAPABILITIES},display
+ARG VIRTUALGL_VERSION=${VIRTUALGL_VERSION}
+RUN cd /tmp && \
+	curl -fsSL -O https://sourceforge.net/projects/virtualgl/files/${VIRTUALGL_VERSION}/virtualgl_${VIRTUALGL_VERSION}_amd64.deb && \
+	dpkg -i *.deb && \
+	rm -f /tmp/*.deb
+
+# Install the full PulseAudio package (client + server)
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		pulseaudio \
+		pulseaudio-utils \
+		alsa-base \
+		alsa-utils \
+		libasound2-dev \
+		portaudio19-dev \
+		libsndfile1 \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Configure the PulseAudio server to work correctly inside the container
+COPY pulseaudio-client.conf /etc/pulse/client.conf
+COPY pulseaudio-daemon.conf /etc/pulse/daemon.conf
+COPY pulseaudio-default.pa /etc/pulse/default.pa
+
+# Install our build prerequisites
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		build-essential \
+		ca-certificates \
+		curl \
+		git \
+		git-lfs \
+		python3 \
+		python3-dev \
+		python3-pip \
+		shared-mime-info \
+		software-properties-common \
+		sudo \
+		tzdata \
+		unzip \
+		xdg-user-dirs \
+		zip && \
+	rm -rf /var/lib/apt/lists/* && echo '' && echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' && echo 'Note that for large filesystem layers this can take quite some time.' && echo 'Performing filesystem layer commit...' && echo ''
+
+# Install the X11 runtime libraries required by CEF so we can cook Unreal Engine projects that use the WebBrowserWidget plugin
+# (Starting in Unreal Engine 5.0, we need these installed before creating an Installed Build to prevent cooking failures related to loading the Quixel Bridge plugin)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+			libasound2 \
+			libatk1.0-0 \
+			libatk-bridge2.0-0 \
+			libcairo2 \
+			libfontconfig1 \
+			libfreetype6 \
+			libglu1 \
+			libnss3 \
+			libnspr4 \
+			libpango-1.0-0 \
+			libpangocairo-1.0-0 \
+			libsm6 \
+			libxcomposite1 \
+			libxcursor1 \
+			libxi6 \
+			libxrandr2 \
+			libxrender1 \
+			libxss1 \
+			libxtst6 \
+			libxv1 \
+			x11-xkb-utils \
+			xauth \
+			xfonts-base \
+			xkb-data && \
+	rm -rf /var/lib/apt/lists/* && echo '' && echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' && echo 'Note that for large filesystem layers this can take quite some time.' && echo 'Performing filesystem layer commit...' && echo ''
+
+# Install the glibc DSO patch to improve Editor startup times
+RUN add-apt-repository -y ppa:slonopotamus/glibc-dso && \
+	apt-get update && \
+	apt upgrade -y libc6 && \
+	rm -rf /var/lib/apt/lists/* && echo '' && echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' && echo 'Note that for large filesystem layers this can take quite some time.' && echo 'Performing filesystem layer commit...' && echo ''
+
+### Set timezone to UTC
+ENV TZ="Etc/UTC"
+RUN \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+	&& dpkg-reconfigure locales tzdata
+
+### Set up locales
+RUN locale-gen en_US.UTF-8
+ENV \
+    LANG=C.UTF-8 \
+    LANGUAGE=C.UTF-8 \
+    LC_ALL=C.UTF-8
+RUN /usr/sbin/update-locale
+
+ENV LANG="en_US.UTF-8" \
+	LC_CTYPE="en_US.UTF-8" \
+	LC_NUMERIC="en_US.UTF-8" \
+	LC_TIME="en_US.UTF-8" \
+	LC_COLLATE="en_US.UTF-8" \
+	LC_MONETARY="en_US.UTF-8" \
+	LC_MESSAGES="en_US.UTF-8" \
+	LC_PAPER="en_US.UTF-8" \
+	LC_NAME="en_US.UTF-8" \
+	LC_ADDRESS="en_US.UTF-8" \
+	LC_TELEPHONE="en_US.UTF-8" \
+	LC_MEASUREMENT="en_US.UTF-8" \
+	LC_IDENTIFICATION="en_US.UTF-8"
+
+### Fix permissions and set working directory
+RUN chmod a+x /usr/local/sbin/* && rm -fr /var/log/* /tmp/*
+
+ARG \
+	PUID=${PUID} \
+	PGID=${PGID}
+
+
+# Unreal refuses to run as the root user, so create a non-root user with no password and allow them to run commands using sudo
+RUN \
+	groupadd -g ${PUID} ue${ENGINE_VERSION} \
+	&& useradd --create-home --home /home/ue${ENGINE_VERSION} --shell /bin/bash --uid ${PUID} --gid ${PGID} ue${ENGINE_VERSION} && \
+	passwd -d ue${ENGINE_VERSION} && \
+ 	usermod -a -G audio,video,sudo ue${ENGINE_VERSION} && echo '' && echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' && echo 'Note that for large filesystem layers this can take quite some time.' && echo 'Performing filesystem layer commit...' && echo ''
+
+
+RUN chown -R ue${ENGINE_VERSION}:ue${ENGINE_VERSION} /home/ue${ENGINE_VERSION}
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		sudo
+# Disable the default "lecture" message the first time a user runs a command using sudo
+RUN echo 'Defaults lecture="never"' >> /etc/sudoers && echo '' && echo 'RUN directive complete. Docker will now commit the filesystem layer to disk.' && echo 'Note that for large filesystem layers this can take quite some time.' && echo 'Performing filesystem layer commit...' && echo ''
+
+#USER ue${ENGINE_VERSION}
+WORKDIR /home/ue${ENGINE_VERSION}
+
+COPY --chown=ue${ENGINE_VERSION}:ue${ENGINE_VERSION} entrypoint.sh /entrypoint.sh
+COPY --chown=ue${ENGINE_VERSION}:ue${ENGINE_VERSION} pulsaudio.asoundrc .asoundrc
+RUN chmod +x /entrypoint.sh
+
+CMD ["env"]
+ENTRYPOINT ["/entrypoint.sh"]
