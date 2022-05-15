@@ -40,22 +40,22 @@ config_path = str()
 #        configs.append(path)
 
 # Check if multiple config files exist and load the user defined one or system/user overwritten one
-if os.path.exists('/configs/config.yaml'):
-    config_path = '/configs/config.yaml'
+if os.path.exists('/configs/pod.yaml'):
+    config_path = '/configs/pod.yaml'
     # Validate file
     schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
-elif os.path.exists('/configs/config.yml'):
-    config_path = '/configs/config.yml'
+elif os.path.exists('/configs/pod.yml'):
+    config_path = '/configs/pod.yml'
     # Validate file
     schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
-elif os.path.exists('/configs/config.yml') and os.path.exists('/configs/config.yaml'):
-    config_path = '/configs/config.yml'
-    log.warning("both config.yaml and config.yml exists, using config.yml")
-    if os.path.exists('/configs/config.yaml'): os.remove('/configs/config.yaml')
+elif os.path.exists('/configs/pod.yml') and os.path.exists('/configs/pod.yaml'):
+    config_path = '/configs/pod.yml'
+    log.warning("both pod.yaml and pod.yml exists, using pod.yml")
+    if os.path.exists('/configs/pod.yaml'): os.remove('/configs/pod.yaml')
     # Validate file
     schema = yamale.make_schema('/scripts/schema.yaml')
     data = yamale.make_data(config_path)

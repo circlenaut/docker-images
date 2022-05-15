@@ -6,5 +6,6 @@
 */tests
 
 # configs
-dev-server/configs/users.ymal
+**/pod.ymal
+**/pod.yml
 dev-server/docker-compose.yaml

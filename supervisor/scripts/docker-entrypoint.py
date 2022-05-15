@@ -45,7 +45,7 @@ DOCKER_ENV = {
 
 def load_config() -> Dict:
     config_path = pathlib.Path(
-        os.getenv('API_CONFIG_FILE', './config.yaml')
+        os.getenv('API_CONFIG_FILE', './pod.yaml')
     )
     if not config_path.exists():
         log.debug("No yaml config file available to load")

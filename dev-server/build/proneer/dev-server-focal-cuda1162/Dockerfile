@@ -708,5 +708,5 @@ COPY scripts/configure_app.py $SCRIPTS_PATH
 COPY scripts/setup_conda_envs.py $SCRIPTS_PATH
 COPY scripts/run_installers.py $SCRIPTS_PATH
 COPY scripts/schema.yaml $SCRIPTS_PATH
-COPY configs/configs-sample.ymal $CONFIGS_PATH/config.yaml
+COPY configs/pod-sample.ymal $CONFIGS_PATH/pod.yaml
 ENTRYPOINT python3 /docker-entrypoint.py

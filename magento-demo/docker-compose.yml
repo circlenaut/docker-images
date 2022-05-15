@@ -47,7 +47,7 @@ services:
       - "./apache2.conf:/etc/supervisor/conf.d/apache2.conf"
       - "./start.sh:/workspace/on_startup.sh"
       - "./auth.json:/workspace/.magento2/auth.json"
-      - "./users.yml:/scripts/config.yml"
+      - "./users.yml:/configs/pod.yml"
       - "./setup.sh:/workspace/installers/magento.sh"
       #- "/data/workspaces/magento-dev/home:/home"
       #- "/data/workspaces/magento-dev/workspace:/workspace"

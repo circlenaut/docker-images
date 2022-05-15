@@ -65,6 +65,6 @@ COPY scripts/run_installers.py $SCRIPTS_PATH
 # copy yaml validator schema
 COPY scripts/schema.yaml $SCRIPTS_PATH
 # copy main config file
-COPY configs/configs-sample.ymal $CONFIGS_PATH/config.yaml
+COPY configs/pod-sample.ymal $CONFIGS_PATH/pod.yaml
 
 ENTRYPOINT ["sudo", "python3", "/docker-entrypoint.py"]

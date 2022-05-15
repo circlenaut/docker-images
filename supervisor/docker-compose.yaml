@@ -32,7 +32,7 @@ services:
     networks:
       - proxy
 #    volumes:
-#      - "./tests/config_test.yml:/scripts/config.yml"
+#      - "./tests/config_test.yml:/configs/pod.yml"
 
     deploy:
       resources:

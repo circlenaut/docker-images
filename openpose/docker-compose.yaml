@@ -80,7 +80,7 @@ services:
     networks:
       - proxy
     volumes:
-      - "./tests/config_test.yml:/scripts/config.yml"
+      - "./tests/config_test.yml:/configs/pod.yml"
 #      - "./tests/pod2-colab/envs:/opt/conda/envs"
 #      - "/data/workspaces/pod2/envs:/opt/conda/envs"
 #      - "/data/workspaces/pod2/workspace:/workspace"
