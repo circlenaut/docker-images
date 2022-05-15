@@ -43,13 +43,13 @@ config_path = str()
 if os.path.exists('/scripts/config.yaml'):
     config_path = '/scripts/config.yaml'
     # Validate file
-    schema = yamale.make_schema('/scripts/schema.yaml')
+    schema = yamale.make_schema('/configs/users.ymal')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
 elif os.path.exists('/scripts/config.yml'):
     config_path = '/scripts/config.yml'
     # Validate file
-    schema = yamale.make_schema('/scripts/schema.yaml')
+    schema = yamale.make_schema('/configs/users.ymal')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO")
 elif os.path.exists('/scripts/config.yml') and os.path.exists('/scripts/config.yaml'):
@@ -57,7 +57,7 @@ elif os.path.exists('/scripts/config.yml') and os.path.exists('/scripts/config.y
     log.warning("both config.yaml and config.yml exists, using config.yml")
     if os.path.exists('/scripts/config.yaml'): os.remove('/scripts/config.yaml')
     # Validate file
-    schema = yamale.make_schema('/scripts/schema.yaml')
+    schema = yamale.make_schema('/configs/users.ymal')
     data = yamale.make_data(config_path)
     valid_config = func.yaml_valid(schema, data, "INFO") 
 else:
@@ -144,7 +144,16 @@ coloredlogs.install(fmt='%(asctime)s [%(levelname)s] %(message)s', level=verbosi
 ### Reconcile docker env var with corresponding config setting
 system_configs = dict()
 # copy and save user configs
-users_config_copy = copy(configs_list["users"])
+if configs_list.get("users") == None:
+    users_config_copy = [{
+        "default_user": {
+            "name": "Default User",
+            "uid": "1001",
+            "password": "password"
+        }
+    }]
+else:
+    users_config_copy = copy(configs_list["users"])
 
 # if system not configured in yaml, then set to docker envs
 if configs_list.get("system") == None:
@@ -314,15 +323,13 @@ default_user = [{
             'batisteo.vscode-django', 
             'bierner.color-info', 
             'bierner.markdown-footnotes', 
-            'bierner.markdown-mermaid', 
+
             'bierner.markdown-preview-github-styles', 
             'CoenraadS.bracket-pair-colorizer-2', 
             'DavidAnson.vscode-markdownlint', 
             'donjayamanne.githistory', 
-            'donjayamanne.python-extension-pack', 
             'eamodio.gitlens', 
             'hbenl.vscode-test-explorer', 
-            'henriiik.docker-linter', 
             'kamikillerto.vscode-colorize', 
             'kisstkondoros.vscode-gutter-preview', 
             'littlefoxteam.vscode-python-test-adapter', 
@@ -331,10 +338,7 @@ default_user = [{
             'ms-toolsai.jupyter', 
             'naumovs.color-highlight', 
             'shd101wyy.markdown-preview-enhanced', 
-            'streetsidesoftware.code-spell-checker', 
-            'tht13.html-preview-vscode', 
-            'tht13.python', 
-            'tushortz.python-extended-snippets', 
+            'streetsidesoftware.code-spell-checker',
             'wholroyd.jinja', 
             'yzhang.markdown-all-in-one'
             ]

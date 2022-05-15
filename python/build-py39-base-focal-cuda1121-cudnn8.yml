@@ -12,7 +12,7 @@ info:
     repository: "registry.dev.proneer.co"
 build:
     base: "ubuntu:20.04"
-    command: "python --version"
+    command: "python3 --version"
     projects:
       - directory: "base-cpu"
         dockerfiles:

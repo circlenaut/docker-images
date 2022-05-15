@@ -680,7 +680,7 @@ RUN \
     # Cleanup
     && clean-layer.sh
 RUN \
-    curl -fsSL https://filebrowser.org/get.sh | bash \
+    curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash \
     # Cleanup
     && clean-layer.sh
 RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
@@ -704,5 +704,5 @@ COPY scripts/configure_caddy.py $SCRIPTS_PATH
 COPY scripts/configure_app.py $SCRIPTS_PATH
 COPY scripts/setup_conda_envs.py $SCRIPTS_PATH
 COPY scripts/run_installers.py $SCRIPTS_PATH
-COPY scripts/schema.yaml $SCRIPTS_PATH
+COPY configs/users.ymal $SCRIPTS_PATH
 ENTRYPOINT python /docker-entrypoint.py

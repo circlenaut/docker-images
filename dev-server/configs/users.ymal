@@ -110,6 +110,6 @@ users:
     app:
         bind_addr: "0.0.0.0:8080"
         base_url: "/"
-        root_dir: "/workspace/magento2"
+        root_dir: "/workspace/admin"
         user: "admin"
         password: "adminpass1234"

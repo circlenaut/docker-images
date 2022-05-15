@@ -280,10 +280,6 @@ config_file = {
 				"writer": {
                     "output": "stdout"
                 },
-                "encoder": {
-                    "format": "single_field",
-                    "field": "common_log"
-                },
 				"level": "",
 				"sampling": {
 					"interval": 0,

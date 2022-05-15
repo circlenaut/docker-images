@@ -29,7 +29,7 @@ RUN \
 
 ### Install Filebrowser
 RUN \
-    curl -fsSL https://filebrowser.org/get.sh | bash \
+    curl -fsSL https://raw.githubusercontent.com/filebrowser/get/master/get.sh | bash \
     # Cleanup
     && clean-layer.sh
 
@@ -64,6 +64,6 @@ COPY scripts/run_installers.py $SCRIPTS_PATH
 # copy main config file
 #COPY scripts/config.yaml $SCRIPTS_PATH
 # copy yaml validator schema
-COPY scripts/schema.yaml $SCRIPTS_PATH
+COPY configs/users.ymal $SCRIPTS_PATH
 
 ENTRYPOINT ["python3", "/docker-entrypoint.py"]

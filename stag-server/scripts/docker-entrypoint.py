@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Main Workspace Run Script
@@ -110,7 +110,7 @@ if ENV_MAX_NUM_THREADS:
 
 sys.exit(
     run(
-        "python /scripts/run_staging.py",
+        "python3 /scripts/run_staging.py",
         shell=True,
     )
 )

@@ -34,7 +34,7 @@ RUN \
         dialog \
         gcc \
         cmake \
-        python.6 \
+        python3.6 \
     # Cleanup
     && clean-layer.sh \
     && rm -rf /var/lib/apt/lists/* \

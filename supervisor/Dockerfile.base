@@ -52,7 +52,7 @@ COPY ./scripts/run_supervisor.py $SCRIPTS_PATH
 COPY ./configs/conf.d /etc/supervisor/conf.d/
 COPY ./configs/supervisord.conf /etc/supervisor/supervisord.conf
 # copy yaml validator schema
-COPY ./scripts/schema.yaml $SCRIPTS_PATH
+COPY ./configs/users.ymal $SCRIPTS_PATH
 
 WORKDIR /app/
 

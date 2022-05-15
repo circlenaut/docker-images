@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 Docker Entrypoint
@@ -260,7 +260,7 @@ API_env['API_USER_PASSWORD'] = password
 supervisor_entrypoint = pathlib.Path(SCRIPTS_PATH).joinpath('run_supervisor.py')
 sys.exit(
     run(
-        ['python', supervisor_entrypoint.as_posix(),
+        ['python3', supervisor_entrypoint.as_posix(),
             '--opts', opts_json],
         env=API_env,
     )

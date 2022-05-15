@@ -85,7 +85,7 @@ RUN \
 
 ### Set default python version
 RUN \
-    update-alternatives --install /usr/bin/python python /usr/bin/python${PY_VERSION} 10
+    update-alternatives --install /usr/bin/python3 python /usr/bin/python${PY_VERSION} 10
 
 WORKDIR /root
 
